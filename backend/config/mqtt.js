@@ -2,7 +2,7 @@ const mqtt = require("mqtt");
 const processScan = require("../abl/attendance/process-scan-abl");
 
 const connectMqtt = () => {
-    const client = mqtt.connect("mqtt://192.168.8.184:1883");
+    const client = mqtt.connect(process.env.MQTT_URL);
 
     client.on("connect", () => {
         console.log("MQTT connected");
@@ -19,7 +19,6 @@ const connectMqtt = () => {
     client.on("message", async (topic, message) => {
         try {
             const parsedMessage = JSON.parse(message.toString());
-
             const uid = parsedMessage?.id;
 
             if (!uid) {

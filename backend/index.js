@@ -10,6 +10,8 @@ const connectMqtt = require("./config/mqtt");
 const sessionRoutes = require("./routes/session-routes");
 const sessionRegistrationRoutes = require("./routes/session-registration-routes");
 const attendanceRecordRoutes = require("./routes/attendance-record-routes");
+const roomRoutes = require("./routes/room-routes");
+const gatewayRoutes = require("./routes/gateway-routes");
 
 dotenv.config();
 
@@ -33,6 +35,8 @@ app.use("/api/classes", classRoutes);
 app.use("/api/sessions", sessionRoutes);
 app.use("/api/session-registrations", sessionRegistrationRoutes);
 app.use("/api/attendance-records", attendanceRecordRoutes);
+app.use("/api/rooms", roomRoutes);
+app.use("/api/gateways", gatewayRoutes);
 
 connectDB().then(() => {
   connectMqtt();

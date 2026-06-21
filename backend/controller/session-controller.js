@@ -1,6 +1,7 @@
 const Session = require("../models/Session");
 const AttendanceRecord = require("../models/AttendanceRecord");
 const AttendanceEvent = require("../models/AttendanceEvent");
+const Gateway = require("../models/Gateway");
 
 const getSessionDashboard = async (req, res) => {
     try {
@@ -45,12 +46,27 @@ const getSessionDashboard = async (req, res) => {
 
 const createSession = async (req, res) => {
     try {
-        const { title, readerId, startAt, endAt } = req.body;
+        const { title, readerId, roomId, startAt, endAt } = req.body;
 
-        if (!title || !readerId || !startAt || !endAt) {
+        if (!title || !startAt || !endAt || (!readerId && !roomId)) {
             return res.status(400).json({
-                message: "title, readerId, startAt and endAt are required",
+                message: "title, startAt, endAt and either readerId or roomId are required",
             });
+        }
+
+        let finalReaderId = readerId;
+        let finalRoomId = roomId || null;
+
+        if (roomId) {
+            const gateway = await Gateway.findOne({ roomId, isActive: true });
+
+            if (!gateway) {
+                return res.status(404).json({
+                    message: "No active gateway found for this room",
+                });
+            }
+
+            finalReaderId = gateway.readerId;
         }
 
         const startDate = new Date(startAt);
@@ -69,7 +85,7 @@ const createSession = async (req, res) => {
         }
 
         const conflictingSession = await Session.findOne({
-            readerId,
+            readerId: finalReaderId,
             startAt: { $lt: endDate },
             endAt: { $gt: startDate },
         });
@@ -83,7 +99,8 @@ const createSession = async (req, res) => {
 
         const session = await Session.create({
             title,
-            readerId,
+            readerId: finalReaderId,
+            roomId: finalRoomId,
             status: "draft",
             scheduledAt: startDate,
             startAt: startDate,

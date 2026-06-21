@@ -12,6 +12,12 @@ const sessionSchema = new mongoose.Schema(
             required: true,
             trim: true,
             default: "tapper-1",
+
+        },
+        roomId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Room",
+            required: false,
         },
         status: {
             type: String,
