@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import "./SessionDetailPage.css";
 
 function SessionDetailPage() {
-    const { id } = useParams();
+    const { roomId, id } = useParams();
 
     const [dashboard, setDashboard] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -84,7 +84,7 @@ function SessionDetailPage() {
     if (error) {
         return (
             <div className="session-detail-page">
-                <Link to="/" className="back-link">← Zpět na session</Link>
+                <Link to={`/rooms/${roomId}`} className="back-link">← Zpět na session</Link>
                 <p className="session-detail-error">{error}</p>
             </div>
         );
@@ -98,7 +98,7 @@ function SessionDetailPage() {
 
     return (
         <div className="session-detail-page">
-            <Link to="/" className="back-link">← Zpět na session</Link>
+            <Link to={`/rooms/${roomId}`} className="back-link">← Zpět na session</Link>
 
             <div className="session-detail-header">
                 <div>
