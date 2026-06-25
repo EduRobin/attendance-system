@@ -1,32 +1,14 @@
-const Room = require("../models/Room");
-const Session = require("../models/Session");
+const roomAbl = require("../abl/room/room-abl");
 
 const createRoom = async (req, res) => {
     try {
-        const { name, description } = req.body;
-
-        if (!name) {
-            return res.status(400).json({
-                message: "name is required",
-            });
-        }
-
-        const room = await Room.create({
-            name,
-            description: description || "",
-        });
-
-        return res.status(201).json({
-            message: "Room created successfully",
-            room,
-        });
+        const result = await roomAbl.createRoom(req.body);
+        return res.status(201).json(result);
     } catch (error) {
         console.error("createRoom error:", error);
 
-        if (error.code === 11000) {
-            return res.status(409).json({
-                message: "Room with this name already exists",
-            });
+        if (error.statusCode) {
+            return res.status(error.statusCode).json({ message: error.message });
         }
 
         return res.status(500).json({ message: "Internal server error" });
@@ -35,8 +17,7 @@ const createRoom = async (req, res) => {
 
 const getRooms = async (req, res) => {
     try {
-        const rooms = await Room.find().sort({ name: 1 });
-
+        const rooms = await roomAbl.getRooms();
         return res.status(200).json(rooms);
     } catch (error) {
         console.error("getRooms error:", error);
@@ -46,23 +27,15 @@ const getRooms = async (req, res) => {
 
 const getSessionsByRoom = async (req, res) => {
     try {
-        const { id } = req.params;
-
-        const room = await Room.findById(id);
-        if (!room) {
-            return res.status(404).json({
-                message: "Room not found",
-            });
-        }
-
-        const sessions = await Session.find({ roomId: id }).sort({ startAt: -1, createdAt: -1 });
-
-        return res.status(200).json({
-            room,
-            sessions,
-        });
+        const result = await roomAbl.getSessionsByRoom(req.params.id);
+        return res.status(200).json(result);
     } catch (error) {
         console.error("getSessionsByRoom error:", error);
+
+        if (error.statusCode) {
+            return res.status(error.statusCode).json({ message: error.message });
+        }
+
         return res.status(500).json({ message: "Internal server error" });
     }
 };

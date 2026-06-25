@@ -7,12 +7,19 @@ function RoomsPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
+    const token = localStorage.getItem("token");
+
     const loadRooms = async () => {
         try {
             setLoading(true);
             setError("");
 
-            const response = await fetch("http://localhost:5000/api/rooms");
+            const response = await fetch("http://localhost:5000/api/rooms", {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
             const data = await response.json();
 
             if (!response.ok) {

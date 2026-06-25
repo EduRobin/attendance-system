@@ -4,8 +4,12 @@ const {
     registerStudentToSession,
     getRegistrationsBySession,
 } = require("../controller/session-registration-controller");
+const {
+    authMiddleware,
+    requireRole,
+} = require("../middleware/auth-middleware");
 
-router.post("/", registerStudentToSession);
-router.get("/session/:sessionId", getRegistrationsBySession);
+router.post("/", authMiddleware, requireRole("admin", "teacher"), registerStudentToSession);
+router.get("/session/:sessionId", authMiddleware, requireRole("admin", "teacher"), getRegistrationsBySession);
 
 module.exports = router;

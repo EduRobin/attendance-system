@@ -162,6 +162,54 @@
     color: #374151;
 }
 
+.session-card__right-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.session-card__activate,
+.session-card__close,
+.session-card__delete {
+    min-width: 110px;
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+}
+
+.session-card__activate {
+    background: #dcfce7;
+    color: #166534;
+    border-color: #bbf7d0;
+}
+
+.session-card__activate:hover {
+    background: #bbf7d0;
+}
+
+.session-card__close {
+    background: #fef3c7;
+    color: #b45309;
+    border-color: #fde68a;
+}
+
+.session-card__close:hover {
+    background: #fde68a;
+}
+
+.session-card__delete {
+    background: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+
+.session-card__delete:hover {
+    background: #fecaca;
+}
+
 .create-session-button {
     border: none;
     background: #111827;

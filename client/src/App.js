@@ -2,8 +2,15 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import RoomsPage from "./pages/RoomsPage";
 import RoomSessionsPage from "./pages/RoomSessionsPage";
 import SessionDetailPage from "./pages/SessionDetailPage";
+import LoginPage from "./pages/LoginPage";
 
 function App() {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    return <LoginPage onLoginSuccess={() => window.location.reload()} />;
+  }
+
   return (
     <BrowserRouter>
       <Routes>

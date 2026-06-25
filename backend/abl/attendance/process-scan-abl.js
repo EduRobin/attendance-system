@@ -2,12 +2,46 @@ const Student = require("../../models/Student");
 const Session = require("../../models/Session");
 const AttendanceRecord = require("../../models/AttendanceRecord");
 const AttendanceEvent = require("../../models/AttendanceEvent");
+const Gateway = require("../../models/Gateway");
 
 const SCAN_COOLDOWN_SECONDS = 3;
 
-const processScan = async (uid, readerId = "tapper-1") => {
+const processScan = async (uid, readerId, deviceToken) => {
     if (!uid) {
         throw new Error("UID is required");
+    }
+
+    if (!readerId) {
+        throw new Error("readerId is required");
+    }
+
+    if (!deviceToken) {
+        const error = new Error("deviceToken is required");
+        error.statusCode = 401;
+        throw error;
+    }
+
+    const gateway = await Gateway.findOne({
+        readerId,
+        deviceToken,
+        isActive: true,
+    });
+
+    if (!gateway) {
+        const error = new Error("Gateway not found or inactive");
+        error.statusCode = 404;
+        throw error;
+    }
+
+    const activeSession = await Session.findOne({
+        roomId: gateway.roomId,
+        status: "active",
+    });
+
+    if (!activeSession) {
+        const error = new Error("No active session found for this room");
+        error.statusCode = 404;
+        throw error;
     }
 
     const normalizedUid = uid.toLowerCase().trim();
@@ -16,17 +50,6 @@ const processScan = async (uid, readerId = "tapper-1") => {
 
     if (!student) {
         const error = new Error("Student with this card UID was not found");
-        error.statusCode = 404;
-        throw error;
-    }
-
-    const activeSession = await Session.findOne({
-        readerId,
-        status: "active",
-    });
-
-    if (!activeSession) {
-        const error = new Error("No active session found for this reader");
         error.statusCode = 404;
         throw error;
     }
@@ -45,7 +68,9 @@ const processScan = async (uid, readerId = "tapper-1") => {
     const now = new Date();
 
     if (student.lastScanAt) {
-        const diffSeconds = (now.getTime() - new Date(student.lastScanAt).getTime()) / 1000;
+        const diffSeconds =
+            (now.getTime() - new Date(student.lastScanAt).getTime()) / 1000;
+
         if (diffSeconds < SCAN_COOLDOWN_SECONDS) {
             return {
                 ignored: true,
@@ -92,7 +117,10 @@ const processScan = async (uid, readerId = "tapper-1") => {
         attendanceRecord.entryAt = now;
         eventType = "arrival";
     } else if (attendanceRecord.status === "present") {
-        const entryTime = attendanceRecord.entryAt ? new Date(attendanceRecord.entryAt) : now;
+        const entryTime = attendanceRecord.entryAt
+            ? new Date(attendanceRecord.entryAt)
+            : now;
+
         const diffSeconds = Math.max(
             0,
             Math.floor((now.getTime() - entryTime.getTime()) / 1000)

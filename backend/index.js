@@ -12,6 +12,7 @@ const sessionRegistrationRoutes = require("./routes/session-registration-routes"
 const attendanceRecordRoutes = require("./routes/attendance-record-routes");
 const roomRoutes = require("./routes/room-routes");
 const gatewayRoutes = require("./routes/gateway-routes");
+const authRoutes = require("./routes/auth-routes");
 
 dotenv.config();
 
@@ -37,6 +38,7 @@ app.use("/api/session-registrations", sessionRegistrationRoutes);
 app.use("/api/attendance-records", attendanceRecordRoutes);
 app.use("/api/rooms", roomRoutes);
 app.use("/api/gateways", gatewayRoutes);
+app.use("/api/auth", authRoutes);
 
 connectDB().then(() => {
   connectMqtt();

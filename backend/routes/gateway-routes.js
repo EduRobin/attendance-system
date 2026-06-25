@@ -4,8 +4,13 @@ const {
     createGateway,
     getGateways,
 } = require("../controller/gateway-controller");
+const {
+    authMiddleware,
+    requireRole,
+} = require("../middleware/auth-middleware");
 
-router.post("/", createGateway);
-router.get("/", getGateways);
+router.get("/", authMiddleware, getGateways);
+
+router.post("/", authMiddleware, requireRole("admin"), createGateway);
 
 module.exports = router;

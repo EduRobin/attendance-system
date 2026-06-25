@@ -20,12 +20,19 @@ function RoomSessionsPage() {
         endAt: "",
     });
 
+    const token = localStorage.getItem("token");
+
     const loadRoomSessions = async () => {
         try {
             setLoading(true);
             setError("");
 
-            const response = await fetch(`http://localhost:5000/api/rooms/${id}/sessions`);
+            const response = await fetch(`http://localhost:5000/api/rooms/${id}/sessions`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
             const data = await response.json();
 
             if (!response.ok) {
@@ -104,6 +111,7 @@ function RoomSessionsPage() {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({
                     title: formData.title,
@@ -144,6 +152,9 @@ function RoomSessionsPage() {
         try {
             const response = await fetch(`http://localhost:5000/api/sessions/${sessionId}`, {
                 method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
             });
 
             const data = await response.json();
@@ -155,6 +166,48 @@ function RoomSessionsPage() {
             await loadRoomSessions();
         } catch (err) {
             alert(err.message || "Došlo k chybě při mazání session.");
+        }
+    };
+
+    const handleActivateSession = async (sessionId) => {
+        try {
+            const response = await fetch(`http://localhost:5000/api/sessions/${sessionId}/activate`, {
+                method: "PATCH",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || "Nepodařilo se aktivovat session");
+            }
+
+            await loadRoomSessions();
+        } catch (err) {
+            alert(err.message || "Došlo k chybě při aktivaci session.");
+        }
+    };
+
+    const handleCloseSession = async (sessionId) => {
+        try {
+            const response = await fetch(`http://localhost:5000/api/sessions/${sessionId}/close`, {
+                method: "PATCH",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || "Nepodařilo se uzavřít session");
+            }
+
+            await loadRoomSessions();
+        } catch (err) {
+            alert(err.message || "Došlo k chybě při uzavření session.");
         }
     };
 
@@ -227,13 +280,35 @@ function RoomSessionsPage() {
                                         {getStatusLabel(session.status)}
                                     </span>
 
-                                    <button
-                                        type="button"
-                                        className="session-card__delete"
-                                        onClick={() => handleDeleteSession(session._id, session.title)}
-                                    >
-                                        Smazat
-                                    </button>
+                                    <div className="session-card__right-actions">
+                                        {session.status === "draft" && (
+                                            <button
+                                                type="button"
+                                                className="session-card__activate"
+                                                onClick={() => handleActivateSession(session._id)}
+                                            >
+                                                Aktivovat
+                                            </button>
+                                        )}
+
+                                        {session.status === "active" && (
+                                            <button
+                                                type="button"
+                                                className="session-card__close"
+                                                onClick={() => handleCloseSession(session._id)}
+                                            >
+                                                Uzavřít
+                                            </button>
+                                        )}
+
+                                        <button
+                                            type="button"
+                                            className="session-card__delete"
+                                            onClick={() => handleDeleteSession(session._id, session.title)}
+                                        >
+                                            Smazat
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>

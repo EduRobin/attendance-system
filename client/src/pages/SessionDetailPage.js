@@ -9,6 +9,8 @@ function SessionDetailPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
+    const token = localStorage.getItem("token");
+
     const loadDashboard = async (showLoader = false) => {
         try {
             if (showLoader) {
@@ -17,7 +19,12 @@ function SessionDetailPage() {
 
             setError("");
 
-            const response = await fetch(`http://localhost:5000/api/sessions/${id}/dashboard`);
+            const response = await fetch(`http://localhost:5000/api/sessions/${id}/dashboard`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
             const data = await response.json();
 
             if (!response.ok) {
@@ -94,7 +101,7 @@ function SessionDetailPage() {
         return null;
     }
 
-    const { session, summary, records, recentEvents } = dashboard;
+    const { session, gateway, summary, records, recentEvents } = dashboard;
 
     return (
         <div className="session-detail-page">
@@ -104,7 +111,7 @@ function SessionDetailPage() {
                 <div>
                     <h1>{session.title}</h1>
                     <p>
-                        Čtečka: <strong>{session.readerId}</strong>
+                        Použitá čtečka: <strong>{gateway?.name || session.readerId}</strong>
                     </p>
                     <p>
                         Termín: <strong>{new Date(session.scheduledAt).toLocaleString("cs-CZ")}</strong>

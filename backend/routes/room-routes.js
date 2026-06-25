@@ -5,9 +5,14 @@ const {
     getRooms,
     getSessionsByRoom,
 } = require("../controller/room-controller");
+const {
+    authMiddleware,
+    requireRole,
+} = require("../middleware/auth-middleware");
 
-router.post("/", createRoom);
-router.get("/", getRooms);
-router.get("/:id/sessions", getSessionsByRoom);
+router.get("/", authMiddleware, getRooms);
+router.get("/:id/sessions", authMiddleware, getSessionsByRoom);
+
+router.post("/", authMiddleware, requireRole("admin"), createRoom);
 
 module.exports = router;

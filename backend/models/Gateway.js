@@ -13,6 +13,11 @@ const gatewaySchema = new mongoose.Schema(
             unique: true,
             trim: true,
         },
+        deviceToken: {
+            type: String,
+            required: true,
+            trim: true,
+        },
         roomId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Room",

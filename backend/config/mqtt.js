@@ -19,14 +19,29 @@ const connectMqtt = () => {
     client.on("message", async (topic, message) => {
         try {
             const parsedMessage = JSON.parse(message.toString());
+
             const uid = parsedMessage?.id;
+            const deviceToken = parsedMessage?.deviceToken;
+
+            const topicParts = topic.split("/");
+            const readerId = topicParts[1];
 
             if (!uid) {
                 console.warn("MQTT message does not contain tag UID");
                 return;
             }
 
-            const result = await processScan(uid);
+            if (!readerId) {
+                console.warn("MQTT topic does not contain readerId");
+                return;
+            }
+
+            if (!deviceToken) {
+                console.warn("MQTT message does not contain deviceToken");
+                return;
+            }
+
+            const result = await processScan(uid, readerId, deviceToken);
 
             console.log("MQTT scan processed:", {
                 ignored: result.ignored,
@@ -36,9 +51,10 @@ const connectMqtt = () => {
                 status: result.attendanceRecord?.status,
                 eventType: result.event?.type || null,
                 sessionTitle: result.session?.title,
+                readerId,
             });
         } catch (error) {
-            console.error("MQTT message processing error:", error.message);
+            console.error("MQTT message processing error:", error);
         }
     });
 
