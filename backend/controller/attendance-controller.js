@@ -1,11 +1,8 @@
-const AttendanceEvent = require("../models/AttendanceEvent");
-const processScan = require("../abl/attendance/process-scan-abl");
+const attendanceAbl = require("../abl/attendance/attendance-abl");
 
 const scanCard = async (req, res) => {
     try {
-        const { uid, readerId } = req.body;
-
-        const result = await processScan(uid, readerId || "tapper-1");
+        const result = await attendanceAbl.scanCard(req.body);
 
         return res.status(200).json(result);
     } catch (error) {
@@ -21,10 +18,7 @@ const scanCard = async (req, res) => {
 
 const getAttendanceEvents = async (req, res) => {
     try {
-        const events = await AttendanceEvent.find()
-            .populate("studentId", "name cardUid")
-            .sort({ timestamp: -1 });
-
+        const events = await attendanceAbl.getAttendanceEvents();
         return res.status(200).json(events);
     } catch (error) {
         console.error("getAttendanceEvents error:", error);
@@ -34,12 +28,7 @@ const getAttendanceEvents = async (req, res) => {
 
 const getAttendanceEventsByClass = async (req, res) => {
     try {
-        const { classId } = req.params;
-
-        const events = await AttendanceEvent.find({ classId })
-            .populate("studentId", "name cardUid")
-            .sort({ timestamp: -1 });
-
+        const events = await attendanceAbl.getAttendanceEventsByClass(req.params.classId);
         return res.status(200).json(events);
     } catch (error) {
         console.error("getAttendanceEventsByClass error:", error);

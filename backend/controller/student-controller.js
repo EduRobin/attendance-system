@@ -1,8 +1,8 @@
-const Student = require("../models/Student");
+const studentAbl = require("../abl/student/student-abl");
 
 const getStudents = async (req, res) => {
     try {
-        const students = await Student.find().sort({ name: 1 });
+        const students = await studentAbl.getStudents();
         return res.status(200).json(students);
     } catch (error) {
         console.error("getStudents error:", error);
@@ -12,10 +12,7 @@ const getStudents = async (req, res) => {
 
 const getStudentsByClass = async (req, res) => {
     try {
-        const { classId } = req.params;
-
-        const students = await Student.find({ classId }).sort({ name: 1 });
-
+        const students = await studentAbl.getStudentsByClass(req.params.classId);
         return res.status(200).json(students);
     } catch (error) {
         console.error("getStudentsByClass error:", error);

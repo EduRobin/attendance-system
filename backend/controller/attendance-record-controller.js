@@ -1,12 +1,10 @@
-const AttendanceRecord = require("../models/AttendanceRecord");
+const attendanceRecordAbl = require("../abl/attendance-record/attendance-record-abl");
 
 const getAttendanceRecordsBySession = async (req, res) => {
     try {
-        const { sessionId } = req.params;
-
-        const records = await AttendanceRecord.find({ sessionId })
-            .populate("studentId", "name cardUid")
-            .sort({ createdAt: 1 });
+        const records = await attendanceRecordAbl.getAttendanceRecordsBySession(
+            req.params.sessionId
+        );
 
         return res.status(200).json(records);
     } catch (error) {
