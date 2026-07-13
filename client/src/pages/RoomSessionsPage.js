@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import "./RoomSessionsPage.css";
 
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
 function RoomSessionsPage() {
     const { id } = useParams();
 
@@ -27,7 +29,7 @@ function RoomSessionsPage() {
             setLoading(true);
             setError("");
 
-            const response = await fetch(`http://localhost:5000/api/rooms/${id}/sessions`, {
+            const response = await fetch(`${API_URL}/api/rooms/${id}/sessions`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -107,7 +109,7 @@ function RoomSessionsPage() {
         setIsSubmitting(true);
 
         try {
-            const response = await fetch("http://localhost:5000/api/sessions", {
+            const response = await fetch(`${API_URL}/api/sessions`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -150,7 +152,7 @@ function RoomSessionsPage() {
         if (!confirmed) return;
 
         try {
-            const response = await fetch(`http://localhost:5000/api/sessions/${sessionId}`, {
+            const response = await fetch(`${API_URL}/api/sessions/${sessionId}`, {
                 method: "DELETE",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -171,7 +173,7 @@ function RoomSessionsPage() {
 
     const handleActivateSession = async (sessionId) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/sessions/${sessionId}/activate`, {
+            const response = await fetch(`${API_URL}/api/sessions/${sessionId}/activate`, {
                 method: "PATCH",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -192,7 +194,7 @@ function RoomSessionsPage() {
 
     const handleCloseSession = async (sessionId) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/sessions/${sessionId}/close`, {
+            const response = await fetch(`${API_URL}/api/sessions/${sessionId}/close`, {
                 method: "PATCH",
                 headers: {
                     Authorization: `Bearer ${token}`,

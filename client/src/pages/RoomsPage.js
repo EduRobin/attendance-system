@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./RoomsPage.css";
 
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
 function RoomsPage() {
     const [rooms, setRooms] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
-
+    
     const token = localStorage.getItem("token");
 
     const loadRooms = async () => {
@@ -14,7 +16,7 @@ function RoomsPage() {
             setLoading(true);
             setError("");
 
-            const response = await fetch("http://localhost:5000/api/rooms", {
+            const response = await fetch(`${API_URL}/api/rooms`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },

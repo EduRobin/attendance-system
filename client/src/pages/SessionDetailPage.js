@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import "./SessionDetailPage.css";
 
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
 function SessionDetailPage() {
     const { roomId, id } = useParams();
 
@@ -19,7 +21,7 @@ function SessionDetailPage() {
 
             setError("");
 
-            const response = await fetch(`http://localhost:5000/api/sessions/${id}/dashboard`, {
+            const response = await fetch(`${API_URL}/api/sessions/${id}/dashboard`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
