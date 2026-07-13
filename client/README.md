@@ -69,7 +69,18 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
 
+
+
 ### ssh tapper@tapper.local
+
+### export MQTT_USERNAME="backend-client"
+### export MQTT_PASSWORD="HESLO_K_BACKEND_CLIENT"
+### export MQTT_TLS="true"
+### tapper run -h 633beea78bdb41e8a13104401193d138.s1.eu.hivemq.cloud -p 8883
+### == ./run-tapper-cloud.sh
+
+
+
 ### tapper run -h localhost -p 1883
 
 ### kdyby se čtečka nechtěla připojit, tak v ssh: hostname -I a IP dat do .env

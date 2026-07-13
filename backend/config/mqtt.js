@@ -2,7 +2,10 @@ const mqtt = require("mqtt");
 const processScan = require("../abl/attendance/process-scan-abl");
 
 const connectMqtt = () => {
-    const client = mqtt.connect(process.env.MQTT_URL);
+    const client = mqtt.connect(process.env.MQTT_URL, {
+        username: process.env.MQTT_USERNAME,
+        password: process.env.MQTT_PASSWORD,
+    });
 
     client.on("connect", () => {
         console.log("MQTT connected");
