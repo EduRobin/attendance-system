@@ -10,14 +10,21 @@ const studentSchema = new mongoose.Schema(
         classId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Class",
-            required: true,
+            required: false,
+            default: null,
         },
         cardUid: {
             type: String,
-            required: true,
+            required: false,
             unique: true,
+            sparse: true,
             trim: true,
             lowercase: true,
+            default: null,
+        },
+        cardActive: {
+            type: Boolean,
+            default: true,
         },
         isPresent: {
             type: Boolean,

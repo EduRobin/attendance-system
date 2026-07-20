@@ -46,7 +46,10 @@ const processScan = async (uid, readerId, deviceToken) => {
 
     const normalizedUid = uid.toLowerCase().trim();
 
-    const student = await Student.findOne({ cardUid: normalizedUid });
+    const student = await Student.findOne({
+        cardUid: normalizedUid,
+        cardActive: true,
+    });
 
     if (!student) {
         const error = new Error("Student with this card UID was not found");
